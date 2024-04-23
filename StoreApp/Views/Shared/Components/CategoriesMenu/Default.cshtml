@@ -1,0 +1,13 @@
+@model IEnumerable<Category>
+
+<div class="my-4">
+    <ul class="list-group"> <!-- we show all the categories available -->
+        @foreach (var category in Model) 
+        { 
+            <li class="list-group-item">
+                <a asp-action="Index" asp-route-categoryId = "@category.CategoryId">@category.CategoryName</a> <!-- we create query string with "asp-route-categoryId" we send it to index in product controller as request parameter which is the category Id  -->
+                
+            </li> 
+        }
+    </ul>
+</div>
