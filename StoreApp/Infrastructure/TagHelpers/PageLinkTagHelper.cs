@@ -7,7 +7,7 @@ using StoreApp.Models;
 
 namespace StoreApp.Infrastructure.TagHelpers
 {
-    [HtmlTargetElement("div", Attributes ="page-model")] //thats how we call in the view pages.
+    [HtmlTargetElement("div", Attributes = "page-model")] //thats how we call in the view pages.
     public class PageLinkTagHelper : TagHelper
     {
         private readonly IUrlHelperFactory _urlHelperFactory;
@@ -17,6 +17,10 @@ namespace StoreApp.Infrastructure.TagHelpers
         public ViewContext? ViewContext { get; set; }
         public Pagination PageModel { get; set; }
         public String? PageAction { get; set; }
+        public bool PageClassesEnabled { get; set; } = false;
+        public string PageClass { get; set; } = String.Empty;
+        public string PageClassNormal { get; set; } = String.Empty;
+        public string PageClassSelected { get; set; } = String.Empty;
 
         public PageLinkTagHelper(IUrlHelperFactory urlHelperFactory)
         {
@@ -25,17 +29,22 @@ namespace StoreApp.Infrastructure.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if(ViewContext is not null && PageModel is not null)
+            if (ViewContext is not null && PageModel is not null)
             {
-                IUrlHelper urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
+                IUrlHelper urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext); //i didnt get this part
                 TagBuilder result = new TagBuilder("div");
-                for (int i = 1; i < PageModel.TotalPages; i++)
+                for (int i = 1; i <= PageModel.TotalPages; i++) //from where do we get the number of pages?
                 {
                     TagBuilder tag = new TagBuilder("a");
-                    tag.Attributes["href"] =urlHelper.Action(PageAction, new {PageNumber = i});
+                    tag.Attributes["href"] = urlHelper.Action(PageAction, new { PageNumber = i });
+                    if(PageClassesEnabled)
+                    {
+                        tag.AddCssClass(PageClass);
+                        tag.AddCssClass(i == PageModel.CurrentPage ? PageClassSelected : PageClassNormal);
+                    }
                     tag.InnerHtml.Append(i.ToString());
                     result.InnerHtml.AppendHtml(tag);
-                    
+
                 }
                 output.Content.AppendHtml(result.InnerHtml);
             }

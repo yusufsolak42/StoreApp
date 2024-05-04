@@ -10,6 +10,7 @@ builder.Services.AddRazorPages();
 
 
 builder.Services.ConfigureDbContext(builder.Configuration); //ConfigureDbContext is the extension method we created.
+builder.Services.ConfigureIdentity(); //extension method for identification of the users.
 builder.Services.ConfigureSession(); //we call extension method for session details.
 builder.Services.ConfigureRepositoryRegistration(); //Extension method for repos.
 builder.Services.ConfigureServiceRegistration(); //Extension method for services.
@@ -25,6 +26,9 @@ app.UseStaticFiles(); //for static files, css and javascript (wwwroot) and other
 app.UseSession();
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseAuthentication(); //this must be between routing and
+app.UseAuthorization(); //this must be between routing and ednpoint
 
 app.UseEndpoints(endpoints =>
 {
@@ -42,6 +46,46 @@ app.UseEndpoints(endpoints =>
 
 
 });
+
+
 app.ConfigureLocalization(); //for local variables like price will be in turkish lira in this app.
 app.ConfigureAndCheckMigration(); //this way, we dont need to write "dotnet ef database update" program will update automatically
+
+//app.ConfigureDefaultAdminUser();
+app.ConfigureDefaultAdminUser(); //extension method to add admin by
+
+
 app.Run();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

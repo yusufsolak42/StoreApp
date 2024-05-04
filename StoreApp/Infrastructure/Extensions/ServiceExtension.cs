@@ -1,5 +1,7 @@
 using Entities.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Repositories;
 using Repositories.Contracts;
 using Services;
@@ -16,8 +18,29 @@ namespace StoreApp.Infrastructure.Extensions
             {
                 options.UseSqlite(configuration.GetConnectionString("sqlconnection"),
                 b => b.MigrationsAssembly("StoreApp"));
+
+                options.EnableSensitiveDataLogging(true);
             });  //we say which database we will use.we get the connection string from appsettings.json file.
+
+            
         }
+
+        public static void ConfigureIdentity(this IServiceCollection services)
+        {
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<RepositoryContext>();
+        }
+
+
 
         public static void ConfigureSession(this IServiceCollection services)
         {
@@ -46,6 +69,7 @@ namespace StoreApp.Infrastructure.Extensions
             services.AddScoped<IProductService, ProductManager>();//so when we initialize this interface, this concrete class will be used.Loosely coupled.
             services.AddScoped<ICategoryService, CategoryManager>();//so when we initialize this interface, this concrete class will be used.Loosely coupled.
             services.AddScoped<IOrderService, OrderManager>();//so when we initialize this interface, this concrete class will be used.Loosely coupled.
+            services.AddScoped<IAuthService, AuthManager>();//so when we initialize this interface, this concrete class will be used.Loosely coupled.
         }
 
         public static void ConfigureRouting(this IServiceCollection services)

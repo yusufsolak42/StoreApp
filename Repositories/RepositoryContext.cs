@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
 using Entities.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Config;
 
 namespace Repositories;
 
-public class RepositoryContext : DbContext //represents the database context for the application
+public class RepositoryContext : IdentityDbContext<IdentityUser> //represents the database context for the application. We use identity for differen roles . (customer, admin etc)
 {
   public DbSet<Product> Products { get; set; } //tables in my dbcontext. Product Class
   public DbSet<Category> Categories { get; set; } //tables in my dbcontext. Category Class
